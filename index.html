@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ميدو بيت - النظام المتكامل (تحديث v9)</title>
+    <title>ميدو بيت - medo bet</title>
     <style>
         :root {
             --primary: #10b981;
@@ -123,13 +123,55 @@
             color: #38bdf8;
             font-weight: bold;
         }
+
+        .win-panel {
+            margin-top: 18px;
+            padding: 16px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #0f766e, #14b8a6);
+            border: 2px solid #2dd4bf;
+            box-shadow: 0 8px 24px rgba(20, 184, 166, 0.25);
+            text-align: center;
+        }
+
+        .win-panel h3 {
+            margin: 0 0 8px;
+            font-size: 22px;
+        }
+
+        .win-panel p {
+            margin: 6px 0;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .win-amount {
+            display: inline-block;
+            margin: 8px 0 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.35);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .win-panel .whatsapp-btn {
+            width: 90%;
+            margin-top: 12px;
+        }
+
+        .tiny-note {
+            font-size: 12px;
+            color: #d1fae5;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1 style="color: #38bdf8; margin-bottom: 5px;">MEDO BET</h1>
-    <p id="statusMsg" style="font-size: 12px; color: #94a3b8;">جاري الاتصال بالسيرفر...</p>
+    <p id="statusMsg" style="font-size: 12px; color: #94a3b8;">جاري التحميل...</p>
 
     <div id="loading">⏳ جاري التحميل... برجاء الانتظار</div>
 
@@ -153,10 +195,20 @@
         </a>
 
         <div class="game-card">
-            <h4>🍎 لعبة التفاحة (فوز 20%)</h4>
+            <h4>(خصارة/فوز)</h4>
             <input type="number" id="betAmount" placeholder="مبلغ الرهان">
             <button onclick="playAppleGame()" style="background: #8b5cf6;">إبدأ اللعب</button>
             <p id="gameMsg" style="font-weight: bold;"></p>
+
+            <div id="winPanel" class="win-panel hidden">
+                <h3>🎉 تم إرسال الربح</h3>
+                <p>خد اسكرين للشاشة واضغط الزر تحت علشان تفتح واتساب مباشرة.</p>
+                <div class="win-amount">الكوينز المرسلة: <span id="sentCoins">0</span></div>
+                <a id="winWhatsappBtn" href="#" target="_blank" class="whatsapp-btn" rel="noopener">
+                    📲 إرسال على واتساب
+                </a>
+                <div class="tiny-note">الرقم: 01124680211</div>
+            </div>
         </div>
 
         <div style="overflow-x: auto;">
@@ -236,6 +288,9 @@
     const adminSection = document.getElementById('adminSection');
     const statusMsg = document.getElementById('statusMsg');
     const errorLog = document.getElementById('errorLog');
+    const winPanel = document.getElementById('winPanel');
+    const sentCoins = document.getElementById('sentCoins');
+    const winWhatsappBtn = document.getElementById('winWhatsappBtn');
 
     function showAuth() {
         loadingEl.classList.add('hidden');
@@ -265,6 +320,24 @@
         }
     }
 
+    function hideWinPanel() {
+        winPanel.classList.add('hidden');
+        sentCoins.innerText = '0';
+        winWhatsappBtn.href = '#';
+    }
+
+    function showWinPanel(amount, customId) {
+        sentCoins.innerText = Number(amount || 0).toLocaleString();
+
+        const phone = "201124680211";
+        const text = encodeURIComponent(
+            `تم الفوز وإرسال ${amount} كوينز.\nID اللاعب: ${customId || '------'}\nبرجاء مراجعة التفاصيل من الصورة المرفقة.`
+        );
+
+        winWhatsappBtn.href = `https://wa.me/${phone}?text=${text}`;
+        winPanel.classList.remove('hidden');
+    }
+
     async function ensureUserDoc(user) {
         const userRef = doc(db, "users", user.uid);
         const snap = await getDoc(userRef);
@@ -280,6 +353,13 @@
                 isAdmin: isAdmin
             });
         }
+    }
+
+    async function addTransactionRecord(payload) {
+        await addDoc(collection(db, "transactions"), {
+            ...payload,
+            timestamp: serverTimestamp()
+        });
     }
 
     window.register = async function() {
@@ -384,6 +464,7 @@
             } else {
                 currentUserId = null;
                 currentUserCustomId = null;
+                hideWinPanel();
                 showAuth();
                 statusMsg.innerText = "🔴 غير متصل";
             }
@@ -415,7 +496,7 @@
                 h += `<tr>
                     <td class="${isIn ? 'in' : 'out'}">${isIn ? 'استلام' : 'إرسال'}</td>
                     <td>${isIn ? (d.fromId || '-') : (d.toId || '-')}</td>
-                    <td>${d.amount || 0}</td>
+                    <td>${Number(d.amount || 0).toLocaleString()}</td>
                     <td>${timeString}</td>
                 </tr>`;
             });
@@ -456,6 +537,7 @@
             if (bal < amt) {
                 msgBox.innerText = "رصيدك لا يكفي للرهان!";
                 msgBox.style.color = "#f87171";
+                hideWinPanel();
                 return;
             }
 
@@ -463,19 +545,44 @@
             const isWin = Math.random() <= 0.20;
 
             if (isWin) {
-                newBal += (amt * 2);
-                msgBox.innerText = `🎉 مبروك! كسبت ${amt * 2} كوينز`;
+                const winCoins = amt * 2;
+                newBal += winCoins;
+
+                await updateDoc(userRef, { balance: newBal });
+
+                await addTransactionRecord({
+                    fromId: "GAME",
+                    toId: currentUserCustomId || "UNKNOWN",
+                    amount: winCoins,
+                    type: "WIN",
+                    note: "تم إرسال الربح تلقائيًا",
+                    involvedIds: [currentUserCustomId || "UNKNOWN", "GAME"]
+                });
+
+                console.log("WIN_SENT", {
+                    userId: currentUserId,
+                    customId: currentUserCustomId,
+                    amount: winCoins,
+                    time: new Date().toISOString()
+                });
+
+                msgBox.innerText = `🎉 مبروك! تم إرسال ${winCoins.toLocaleString()} كوينز`;
                 msgBox.style.color = "#4ade80";
+
+                document.getElementById('u_balance').innerText = Number(newBal).toLocaleString();
+                showWinPanel(winCoins, currentUserCustomId);
             } else {
+                await updateDoc(userRef, { balance: newBal });
+
                 msgBox.innerText = "😢 خسرت الرهان. جرب تاني!";
                 msgBox.style.color = "#f87171";
+                hideWinPanel();
             }
-
-            await updateDoc(userRef, { balance: newBal });
         } catch (err) {
             console.error(err);
             msgBox.innerText = "حدث خطأ أثناء اللعب";
             msgBox.style.color = "#f87171";
+            hideWinPanel();
         }
     };
 
@@ -528,7 +635,8 @@
                 toId: tid,
                 amount: amt,
                 involvedIds: [tid, "ADMIN"],
-                timestamp: serverTimestamp()
+                timestamp: serverTimestamp(),
+                type: "ADMIN_SEND"
             });
 
             msgBox.innerText = `تم إرسال ${amt} كوينز بنجاح`;
