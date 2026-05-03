@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ميدو بيت - medo bet</title>
     <style>
         :root {
             --primary: #10b981;
             --bg: #0f172a;
             --card: #1e293b;
+            --card2: #131e32;
+            --danger: #f87171;
+            --info: #38bdf8;
+            --warning: #f59e0b;
         }
+
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background-color: var(--bg);
+            background: radial-gradient(circle at top, #111c38 0%, var(--bg) 55%);
             color: white;
             text-align: center;
             margin: 0;
@@ -21,143 +27,144 @@
         }
 
         .container {
-            max-width: 500px;
+            max-width: 560px;
             margin: auto;
-            background: var(--card);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: rgba(30, 41, 59, 0.96);
+            padding: 24px;
+            border-radius: 22px;
+            box-shadow: 0 14px 34px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        input {
-            width: 90%;
-            margin: 10px 0;
-            padding: 12px;
-            border-radius: 8px;
+        h1 {
+            margin: 0 0 6px;
+            color: var(--info);
+            letter-spacing: 1px;
+        }
+
+        p, small { line-height: 1.7; }
+
+        input, button {
+            width: 95%;
+            margin: 8px 0;
+            padding: 13px 12px;
+            border-radius: 12px;
             border: 1px solid #334155;
-            background: #0f172a;
-            color: white;
-            text-align: center;
             font-size: 16px;
             outline: none;
         }
 
+        input {
+            background: #0f172a;
+            color: white;
+            text-align: center;
+        }
+
+        input::placeholder { color: #94a3b8; }
+
         button {
-            width: 95%;
-            margin: 10px 0;
-            padding: 12px;
-            border-radius: 8px;
             border: none;
             background: var(--primary);
             color: white;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
-            transition: 0.3s;
-            font-size: 16px;
+            transition: 0.25s;
         }
 
         button:hover {
-            opacity: 0.85;
-            transform: translateY(-2px);
+            opacity: 0.9;
+            transform: translateY(-1px);
         }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .secondary { background: #3b82f6; }
+        .purple { background: #8b5cf6; }
+        .gray { background: #64748b; }
+        .red { background: #ef4444; }
 
         .balance-box {
             background: linear-gradient(45deg, #f59e0b, #d97706);
-            padding: 20px;
-            border-radius: 15px;
+            padding: 18px;
+            border-radius: 16px;
             font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            font-weight: 800;
+            margin: 18px 0 16px;
+            box-shadow: 0 8px 18px rgba(245, 158, 11, 0.25);
         }
 
         .hidden { display: none !important; }
 
         .whatsapp-btn {
-            background-color: #25D366;
+            display: block;
+            background: #25D366;
             color: white;
             text-decoration: none;
-            padding: 15px;
-            border-radius: 10px;
-            display: block;
-            margin: 15px auto;
-            font-weight: bold;
-            width: 85%;
+            padding: 14px;
+            border-radius: 12px;
+            margin: 12px auto;
+            font-weight: 800;
+            width: 95%;
         }
 
         .game-card {
-            background: #131e32;
-            border: 2px solid #38bdf8;
-            padding: 15px;
-            border-radius: 15px;
-            margin-top: 20px;
+            background: var(--card2);
+            border: 1px solid #243449;
+            padding: 16px;
+            border-radius: 18px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .game-card h4 {
+            margin: 0 0 10px;
+            color: #e2e8f0;
+        }
+
+        .history-wrap {
+            overflow-x: auto;
+            margin-top: 18px;
         }
 
         .history-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            min-width: 520px;
             font-size: 13px;
-            background: #334155;
-            border-radius: 10px;
+            background: #0f172a;
+            border-radius: 12px;
             overflow: hidden;
         }
 
         th, td {
             padding: 10px;
-            border-bottom: 1px solid #475569;
+            border-bottom: 1px solid #334155;
             text-align: center;
         }
 
         th {
-            background: #475569;
+            background: #334155;
             color: #fbbf24;
         }
 
-        .in { color: #4ade80; }
-        .out { color: #f87171; }
+        .in { color: #4ade80; font-weight: 700; }
+        .out { color: #f87171; font-weight: 700; }
 
         #loading {
-            padding: 50px;
+            padding: 50px 0 30px;
             font-size: 20px;
-            color: #38bdf8;
-            font-weight: bold;
+            color: var(--info);
+            font-weight: 800;
         }
 
-        .win-panel {
-            margin-top: 18px;
-            padding: 16px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #0f766e, #14b8a6);
-            border: 2px solid #2dd4bf;
-            box-shadow: 0 8px 24px rgba(20, 184, 166, 0.25);
-            text-align: center;
-        }
-
-        .win-panel h3 {
-            margin: 0 0 8px;
-            font-size: 22px;
-        }
-
-        .win-panel p {
-            margin: 6px 0;
-            font-size: 15px;
-            line-height: 1.8;
-        }
-
-        .win-amount {
-            display: inline-block;
-            margin: 8px 0 10px;
-            padding: 10px 14px;
-            border-radius: 12px;
-            background: rgba(15, 23, 42, 0.35);
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .win-panel .whatsapp-btn {
-            width: 90%;
-            margin-top: 12px;
+        .msg {
+            min-height: 24px;
+            font-weight: 700;
+            margin: 8px 0 0;
         }
 
         .tiny-note {
@@ -165,29 +172,50 @@
             color: #d1fae5;
             margin-top: 8px;
         }
+
+        .section-title {
+            margin: 18px 0 6px;
+            color: #cbd5e1;
+        }
+
+        .spin-badge {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.35);
+            border: 1px solid rgba(255,255,255,0.08);
+            font-weight: 700;
+        }
+
+        .divider {
+            border: 0;
+            border-top: 1px solid #334155;
+            margin: 16px 0;
+        }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <h1 style="color: #38bdf8; margin-bottom: 5px;">MEDO BET</h1>
+    <h1>MEDO BET</h1>
     <p id="statusMsg" style="font-size: 12px; color: #94a3b8;">جاري التحميل...</p>
 
     <div id="loading">⏳ جاري التحميل... برجاء الانتظار</div>
 
     <div id="authSection" class="hidden">
         <h3>تسجيل الدخول / اشتراك</h3>
-        <input type="email" id="email" placeholder="البريد الإلكتروني">
-        <input type="password" id="password" placeholder="كلمة المرور">
+        <input type="email" id="email" placeholder="البريد الإلكتروني" />
+        <input type="password" id="password" placeholder="كلمة المرور" />
         <button onclick="login()">دخول</button>
-        <button onclick="register()" style="background: #3b82f6;">إنشاء حساب جديد</button>
-        <p id="errorLog" style="color: #f87171; font-size: 14px; font-weight: bold;"></p>
+        <button onclick="register()" class="secondary">إنشاء حساب جديد</button>
+        <p id="errorLog" class="msg"></p>
     </div>
 
     <div id="userSection" class="hidden">
         <div class="balance-box">
-            رصيدك: <span id="u_balance">0</span> كوينز<br>
+            رصيدك: <span id="u_balance">0</span> كوينز<br />
             <small style="font-size: 13px;">ID الحساب: <span id="u_id" style="color: #0f172a;">--------</span></small>
+            <div class="spin-badge">لفات العجلة المتاحة: <span id="u_spins">0</span></div>
         </div>
 
         <a href="https://wa.me/201124680211" target="_blank" class="whatsapp-btn" rel="noopener">
@@ -195,45 +223,81 @@
         </a>
 
         <div class="game-card">
-            <h4>(خصارة/فوز)</h4>
-            <input type="number" id="betAmount" placeholder="مبلغ الرهان">
-            <button onclick="playAppleGame()" style="background: #8b5cf6;">إبدأ اللعب</button>
-            <p id="gameMsg" style="font-weight: bold;"></p>
-
-            <div id="winPanel" class="win-panel hidden">
-                <h3>🎉 تم إرسال الربح</h3>
-                <p>خد اسكرين للشاشة واضغط الزر تحت علشان تفتح واتساب مباشرة.</p>
-                <div class="win-amount">الكوينز المرسلة: <span id="sentCoins">0</span></div>
-                <a id="winWhatsappBtn" href="#" target="_blank" class="whatsapp-btn" rel="noopener">
-                    📲 إرسال على واتساب
-                </a>
-                <div class="tiny-note">الرقم: 01124680211</div>
-            </div>
+            <h4>💸 سحب رصيد</h4>
+            <input type="number" id="withdrawAmount" placeholder="مبلغ السحب" />
+            <button onclick="withdraw()" class="red">طلب سحب</button>
+            <a id="withdrawWhatsappBtn" href="#" target="_blank" class="whatsapp-btn hidden" rel="noopener">
+                📲 إرسال طلب السحب على واتساب
+            </a>
+            <p id="withdrawMsg" class="msg"></p>
         </div>
 
-        <div style="overflow-x: auto;">
-            <h4>📜 آخر 20 عملية</h4>
+        <div class="game-card">
+            <h4>🔁 تحويل رصيد لشخص آخر</h4>
+            <input type="number" id="transferId" placeholder="ID اللاعب (8 أرقام)" />
+            <input type="number" id="transferAmount" placeholder="المبلغ" />
+            <button onclick="transferCoins()">إرسال الآن</button>
+            <p id="transferMsg" class="msg"></p>
+        </div>
+
+        <div class="game-card">
+            <h4>🎡 عجلة الحظ</h4>
+            <button onclick="spinWheel()" class="purple">لف العجلة</button>
+            <p id="spinMsg" class="msg"></p>
+            <div class="tiny-note">كل شحن = فرصة لفة إضافية</div>
+        </div>
+
+        <div class="game-card">
+            <h4>🎮 لعبة الرهان</h4>
+            <input type="number" id="betAmount" placeholder="مبلغ الرهان" />
+            <button onclick="playAppleGame()" class="purple">إبدأ اللعب</button>
+            <p id="gameMsg" class="msg"></p>
+        </div>
+
+        <div class="history-wrap">
+            <h4 class="section-title">📜 آخر 20 عملية</h4>
             <table class="history-table">
                 <thead>
-                    <tr><th>النوع</th><th>الطرف</th><th>المبلغ</th><th>التاريخ</th></tr>
+                <tr>
+                    <th>النوع</th>
+                    <th>الطرف</th>
+                    <th>المبلغ</th>
+                    <th>التاريخ</th>
+                </tr>
                 </thead>
                 <tbody id="historyBody"></tbody>
             </table>
         </div>
 
-        <button onclick="logout()" style="background: #64748b; margin-top: 20px;">خروج</button>
+        <button onclick="logout()" class="gray" style="margin-top: 18px;">خروج</button>
     </div>
 
     <div id="adminSection" class="hidden">
         <div class="balance-box" style="background: #ef4444;">لوحة تحكم المدير</div>
-        <button onclick="generateMillion()" style="background: #7c3aed;">➕ توليد مليون كوينز</button>
-        <hr style="border-color: #334155;">
-        <h4>إرسال كوينز للاعب</h4>
-        <input type="number" id="targetId" placeholder="ID اللاعب (8 أرقام)">
-        <input type="number" id="sendAmount" placeholder="الكمية">
-        <button onclick="adminSend()">إرسال الآن</button>
-        <p id="adminMsg" style="font-weight: bold;"></p>
-        <button onclick="logout()" style="background: #64748b; margin-top: 15px;">خروج</button>
+
+        <div class="game-card">
+            <h4>➕ شحن لاعب</h4>
+            <input type="number" id="rechargeTargetId" placeholder="ID اللاعب (8 أرقام)" />
+            <input type="number" id="rechargeAmount" placeholder="مبلغ الشحن" />
+            <button onclick="adminRecharge()">شحن + فرصة لفة</button>
+            <p id="adminRechargeMsg" class="msg"></p>
+        </div>
+
+        <div class="game-card">
+            <h4>💰 إرسال كوينز للاعب</h4>
+            <input type="number" id="targetId" placeholder="ID اللاعب (8 أرقام)" />
+            <input type="number" id="sendAmount" placeholder="الكمية" />
+            <button onclick="adminSend()">إرسال الآن</button>
+            <p id="adminMsg" class="msg"></p>
+        </div>
+
+        <div class="game-card">
+            <h4>🪙 توليد مليون كوينز للحساب الحالي</h4>
+            <button onclick="generateMillion()" class="purple">توليد مليون</button>
+            <p id="millMsg" class="msg"></p>
+        </div>
+
+        <button onclick="logout()" class="gray" style="margin-top: 15px;">خروج</button>
     </div>
 </div>
 
@@ -262,7 +326,8 @@
         updateDoc,
         increment,
         serverTimestamp,
-        getDocs
+        getDocs,
+        runTransaction
     } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -280,7 +345,11 @@
 
     let currentUserId = null;
     let currentUserCustomId = null;
+    let currentUserIsAdmin = false;
     let unsubscribeLogs = null;
+    let unsubscribeUserDoc = null;
+    let logsLoadedFor = null;
+    let isBusy = false;
 
     const loadingEl = document.getElementById('loading');
     const authSection = document.getElementById('authSection');
@@ -288,9 +357,31 @@
     const adminSection = document.getElementById('adminSection');
     const statusMsg = document.getElementById('statusMsg');
     const errorLog = document.getElementById('errorLog');
-    const winPanel = document.getElementById('winPanel');
-    const sentCoins = document.getElementById('sentCoins');
-    const winWhatsappBtn = document.getElementById('winWhatsappBtn');
+    const withdrawWhatsappBtn = document.getElementById('withdrawWhatsappBtn');
+
+    const MAX_BET = 100000;
+    const MAX_TRANSFER = 1000000;
+    const SPIN_REWARDS = [0, 10, 20, 50, 100, 200, 500, 1000];
+
+    function setBusy(state) {
+        isBusy = state;
+        document.querySelectorAll('button').forEach(btn => {
+            if (btn.id !== 'logoutBtn') btn.disabled = state;
+        });
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
+    function formatCoins(value) {
+        return Number(value || 0).toLocaleString('en-US');
+    }
 
     function showAuth() {
         loadingEl.classList.add('hidden');
@@ -313,29 +404,32 @@
         adminSection.classList.remove('hidden');
     }
 
-    function stopOldLogs() {
+    function stopListeners() {
         if (typeof unsubscribeLogs === 'function') {
             unsubscribeLogs();
             unsubscribeLogs = null;
         }
+        if (typeof unsubscribeUserDoc === 'function') {
+            unsubscribeUserDoc();
+            unsubscribeUserDoc = null;
+        }
+        logsLoadedFor = null;
     }
 
-    function hideWinPanel() {
-        winPanel.classList.add('hidden');
-        sentCoins.innerText = '0';
-        winWhatsappBtn.href = '#';
+    function hideWithdrawWhatsApp() {
+        withdrawWhatsappBtn.classList.add('hidden');
+        withdrawWhatsappBtn.href = '#';
     }
 
-    function showWinPanel(amount, customId) {
-        sentCoins.innerText = Number(amount || 0).toLocaleString();
-
+    function showWithdrawWhatsApp(amount, customId) {
         const phone = "201124680211";
         const text = encodeURIComponent(
-            `تم الفوز وإرسال ${amount} كوينز.\nID اللاعب: ${customId || '------'}\nبرجاء مراجعة التفاصيل من الصورة المرفقة.`
+            `طلب سحب جديد\n` +
+            `ID اللاعب: ${customId || '------'}\n` +
+            `المبلغ المطلوب: ${formatCoins(amount)} كوينز`
         );
-
-        winWhatsappBtn.href = `https://wa.me/${phone}?text=${text}`;
-        winPanel.classList.remove('hidden');
+        withdrawWhatsappBtn.href = `https://wa.me/${phone}?text=${text}`;
+        withdrawWhatsappBtn.classList.remove('hidden');
     }
 
     async function ensureUserDoc(user) {
@@ -344,13 +438,13 @@
 
         if (!snap.exists()) {
             const randomId = Math.floor(10000000 + Math.random() * 90000000).toString();
-            const isAdmin = (user.email === "1@gmail.com");
-
             await setDoc(userRef, {
                 email: user.email || "",
                 balance: 0,
+                spins: 0,
                 customId: randomId,
-                isAdmin: isAdmin
+                isAdmin: user.email === "1@gmail.com",
+                createdAt: serverTimestamp()
             });
         }
     }
@@ -362,7 +456,81 @@
         });
     }
 
-    window.register = async function() {
+    async function getUserByCustomId(customId) {
+        const q = query(
+            collection(db, "users"),
+            where("customId", "==", customId),
+            limit(1)
+        );
+        const qs = await getDocs(q);
+        if (qs.empty) return null;
+        return qs.docs[0].ref;
+    }
+
+    function updateUserUi(data) {
+        document.getElementById('u_balance').innerText = formatCoins(data.balance || 0);
+        document.getElementById('u_id').innerText = data.customId || "--------";
+        document.getElementById('u_spins').innerText = formatCoins(data.spins || 0);
+    }
+
+    function loadLogs(myId) {
+        if (!myId) return;
+        if (logsLoadedFor === myId) return;
+
+        if (typeof unsubscribeLogs === 'function') {
+            unsubscribeLogs();
+            unsubscribeLogs = null;
+        }
+
+        logsLoadedFor = myId;
+
+        const q = query(
+            collection(db, "transactions"),
+            where("involvedIds", "array-contains", myId),
+            orderBy("timestamp", "desc"),
+            limit(20)
+        );
+
+        unsubscribeLogs = onSnapshot(q, (snap) => {
+            let h = "";
+
+            snap.forEach((document) => {
+                const d = document.data() || {};
+                const inbound = ['WIN', 'RECHARGE', 'ADMIN_SEND'].includes(d.type) || d.toId === myId;
+                const typeLabel = d.type === 'WIN' ? 'فوز'
+                    : d.type === 'LOSS' ? 'خسارة'
+                    : d.type === 'TRANSFER' ? 'تحويل'
+                    : d.type === 'WITHDRAW_REQUEST' ? 'سحب'
+                    : d.type === 'RECHARGE' ? 'شحن'
+                    : d.type === 'SPIN_WIN' ? 'عجلة'
+                    : d.type === 'ADMIN_SEND' ? 'إرسال إداري'
+                    : (d.type || 'عملية');
+
+                const otherParty = inbound ? (d.fromId || '-') : (d.toId || '-');
+                const timeString = d.timestamp && typeof d.timestamp.toDate === 'function'
+                    ? d.timestamp.toDate().toLocaleString('ar-EG')
+                    : 'الآن';
+
+                h += `<tr>
+                    <td class="${inbound ? 'in' : 'out'}">${escapeHtml(typeLabel)}</td>
+                    <td>${escapeHtml(otherParty)}</td>
+                    <td>${formatCoins(d.amount || 0)}</td>
+                    <td>${escapeHtml(timeString)}</td>
+                </tr>`;
+            });
+
+            if (!h) {
+                h = "<tr><td colspan='4'>لا توجد عمليات</td></tr>";
+            }
+
+            document.getElementById('historyBody').innerHTML = h;
+        }, (err) => {
+            console.error(err);
+            document.getElementById('historyBody').innerHTML = "<tr><td colspan='4'>تعذر تحميل السجل</td></tr>";
+        });
+    }
+
+    window.register = async function () {
         const email = document.getElementById('email').value.trim();
         const pass = document.getElementById('password').value;
 
@@ -388,19 +556,22 @@
             await setDoc(doc(db, "users", userCredential.user.uid), {
                 email: email,
                 balance: 0,
+                spins: 0,
                 customId: randomId,
-                isAdmin: (email === "1@gmail.com")
+                isAdmin: email === "1@gmail.com",
+                createdAt: serverTimestamp()
             });
 
             errorLog.innerText = "تم إنشاء الحساب بنجاح";
             errorLog.style.color = "#4ade80";
         } catch (err) {
+            console.error(err);
             errorLog.innerText = "خطأ: " + (err?.message || "حدث خطأ غير معروف");
             errorLog.style.color = "#f87171";
         }
     };
 
-    window.login = async function() {
+    window.login = async function () {
         const email = document.getElementById('email').value.trim();
         const pass = document.getElementById('password').value;
 
@@ -417,57 +588,67 @@
             await signInWithEmailAndPassword(auth, email, pass);
             errorLog.innerText = "";
         } catch (err) {
+            console.error(err);
             errorLog.innerText = "البيانات غير صحيحة";
             errorLog.style.color = "#f87171";
         }
     };
 
-    window.logout = function() {
-        signOut(auth).then(() => {
-            stopOldLogs();
-            location.reload();
-        }).catch(() => {
-            location.reload();
-        });
+    window.logout = function () {
+        signOut(auth)
+            .then(() => {
+                stopListeners();
+                location.reload();
+            })
+            .catch(() => {
+                location.reload();
+            });
     };
 
     onAuthStateChanged(auth, async (user) => {
         try {
-            stopOldLogs();
+            stopListeners();
 
-            if (user) {
-                currentUserId = user.uid;
-                await ensureUserDoc(user);
+            if (!user) {
+                currentUserId = null;
+                currentUserCustomId = null;
+                currentUserIsAdmin = false;
+                hideWithdrawWhatsApp();
+                showAuth();
+                statusMsg.innerText = "🔴 غير متصل";
+                return;
+            }
 
-                const userRef = doc(db, "users", user.uid);
-                const docSnap = await getDoc(userRef);
+            currentUserId = user.uid;
+            await ensureUserDoc(user);
 
+            const userRef = doc(db, "users", user.uid);
+            unsubscribeUserDoc = onSnapshot(userRef, (docSnap) => {
                 if (!docSnap.exists()) {
                     showAuth();
                     statusMsg.innerText = "🔴 تعذر تحميل بيانات الحساب";
                     return;
                 }
 
-                const data = docSnap.data();
+                const data = docSnap.data() || {};
                 currentUserCustomId = data.customId || null;
+                currentUserIsAdmin = !!data.isAdmin;
 
-                if (data.isAdmin) {
+                updateUserUi(data);
+                statusMsg.innerText = "🟢 متصل: " + (data.email || user.email || "");
+
+                if (currentUserIsAdmin) {
                     showAdmin();
                 } else {
                     showUser();
-                    document.getElementById('u_balance').innerText = Number(data.balance || 0).toLocaleString();
-                    document.getElementById('u_id').innerText = data.customId || "--------";
-                    loadLogs(data.customId);
+                    loadLogs(currentUserCustomId);
                 }
-
-                statusMsg.innerText = "🟢 متصل: " + (data.email || user.email || "");
-            } else {
-                currentUserId = null;
-                currentUserCustomId = null;
-                hideWinPanel();
+            }, (err) => {
+                console.error(err);
                 showAuth();
-                statusMsg.innerText = "🔴 غير متصل";
-            }
+                statusMsg.innerText = "🔴 حدث خطأ أثناء تحميل بيانات الحساب";
+            });
+
         } catch (err) {
             console.error(err);
             showAuth();
@@ -475,176 +656,460 @@
         }
     });
 
-    function loadLogs(myId) {
-        if (!myId) return;
+    window.playAppleGame = async function () {
+        if (isBusy) return;
+        setBusy(true);
 
-        const q = query(
-            collection(db, "transactions"),
-            where("involvedIds", "array-contains", myId),
-            orderBy("timestamp", "desc"),
-            limit(20)
-        );
-
-        unsubscribeLogs = onSnapshot(q, (snap) => {
-            let h = "";
-
-            snap.forEach((document) => {
-                const d = document.data();
-                const isIn = (d.toId === myId);
-                const timeString = d.timestamp ? d.timestamp.toDate().toLocaleString('ar-EG') : 'الآن';
-
-                h += `<tr>
-                    <td class="${isIn ? 'in' : 'out'}">${isIn ? 'استلام' : 'إرسال'}</td>
-                    <td>${isIn ? (d.fromId || '-') : (d.toId || '-')}</td>
-                    <td>${Number(d.amount || 0).toLocaleString()}</td>
-                    <td>${timeString}</td>
-                </tr>`;
-            });
-
-            if (h === "") {
-                h = "<tr><td colspan='4'>لا توجد عمليات</td></tr>";
-            }
-
-            document.getElementById('historyBody').innerHTML = h;
-        }, (err) => {
-            console.error(err);
-            document.getElementById('historyBody').innerHTML = "<tr><td colspan='4'>تعذر تحميل السجل</td></tr>";
-        });
-    }
-
-    window.playAppleGame = async function() {
-        const amt = parseInt(document.getElementById('betAmount').value);
+        const amt = parseInt(document.getElementById('betAmount').value, 10);
         const msgBox = document.getElementById('gameMsg');
 
-        if (!amt || amt <= 0) {
-            msgBox.innerText = "أدخل مبلغ صحيح";
-            msgBox.style.color = "#f87171";
-            return;
-        }
-
         try {
+            msgBox.innerText = "";
+
+            if (!currentUserId) {
+                msgBox.innerText = "يجب تسجيل الدخول أولاً";
+                msgBox.style.color = "#f87171";
+                return;
+            }
+
+            if (!amt || amt <= 0) {
+                msgBox.innerText = "أدخل مبلغ صحيح";
+                msgBox.style.color = "#f87171";
+                return;
+            }
+
+            if (amt > MAX_BET) {
+                msgBox.innerText = `الحد الأقصى للرهان هو ${formatCoins(MAX_BET)} كوينز`;
+                msgBox.style.color = "#f87171";
+                return;
+            }
+
             const userRef = doc(db, "users", currentUserId);
-            const docSnap = await getDoc(userRef);
+            const isWin = Math.random() <= 0.40;
 
-            if (!docSnap.exists()) {
-                msgBox.innerText = "تعذر العثور على الحساب";
-                msgBox.style.color = "#f87171";
-                return;
-            }
+            await runTransaction(db, async (tx) => {
+                const snap = await tx.get(userRef);
+                if (!snap.exists()) throw new Error("USER_NOT_FOUND");
 
-            const bal = Number(docSnap.data().balance || 0);
+                const bal = Number(snap.data().balance || 0);
 
-            if (bal < amt) {
-                msgBox.innerText = "رصيدك لا يكفي للرهان!";
-                msgBox.style.color = "#f87171";
-                hideWinPanel();
-                return;
-            }
+                if (bal < amt) {
+                    throw new Error("INSUFFICIENT_BALANCE");
+                }
 
-            let newBal = bal - amt;
-            const isWin = Math.random() <= 0.20;
-
-            if (isWin) {
-                const winCoins = amt * 2;
-                newBal += winCoins;
-
-                await updateDoc(userRef, { balance: newBal });
-
-                await addTransactionRecord({
-                    fromId: "GAME",
-                    toId: currentUserCustomId || "UNKNOWN",
-                    amount: winCoins,
-                    type: "WIN",
-                    note: "تم إرسال الربح تلقائيًا",
-                    involvedIds: [currentUserCustomId || "UNKNOWN", "GAME"]
+                const newBal = isWin ? (bal + amt) : (bal - amt);
+                tx.update(userRef, {
+                    balance: newBal
                 });
-
-                console.log("WIN_SENT", {
-                    userId: currentUserId,
-                    customId: currentUserCustomId,
-                    amount: winCoins,
-                    time: new Date().toISOString()
-                });
-
-                msgBox.innerText = `🎉 مبروك! تم إرسال ${winCoins.toLocaleString()} كوينز`;
-                msgBox.style.color = "#4ade80";
-
-                document.getElementById('u_balance').innerText = Number(newBal).toLocaleString();
-                showWinPanel(winCoins, currentUserCustomId);
-            } else {
-                await updateDoc(userRef, { balance: newBal });
-
-                msgBox.innerText = "😢 خسرت الرهان. جرب تاني!";
-                msgBox.style.color = "#f87171";
-                hideWinPanel();
-            }
-        } catch (err) {
-            console.error(err);
-            msgBox.innerText = "حدث خطأ أثناء اللعب";
-            msgBox.style.color = "#f87171";
-            hideWinPanel();
-        }
-    };
-
-    window.generateMillion = async function() {
-        const msg = document.getElementById('adminMsg');
-
-        try {
-            await updateDoc(doc(db, "users", currentUserId), {
-                balance: increment(1000000)
             });
 
-            msg.innerText = "تمت إضافة مليون كوينز بنجاح!";
-            msg.style.color = "#4ade80";
+            const newBalanceText = document.getElementById('u_balance').innerText;
+
+            await addTransactionRecord({
+                fromId: isWin ? "GAME" : currentUserCustomId || "UNKNOWN",
+                toId: isWin ? (currentUserCustomId || "UNKNOWN") : "GAME",
+                amount: amt,
+                type: isWin ? "WIN" : "LOSS",
+                note: isWin ? "تم تسجيل فوز في اللعبة" : "تم تسجيل خسارة في اللعبة",
+                involvedIds: [currentUserCustomId || "UNKNOWN", "GAME"]
+            });
+
+            msgBox.innerText = isWin
+                ? `🎉 مبروك! كسبت ${formatCoins(amt)} كوينز`
+                : "😢 خسرت الرهان. جرب تاني!";
+            msgBox.style.color = isWin ? "#4ade80" : "#f87171";
+
+            void newBalanceText;
         } catch (err) {
             console.error(err);
-            msg.innerText = "فشل تنفيذ العملية";
-            msg.style.color = "#f87171";
+
+            if (String(err?.message) === "INSUFFICIENT_BALANCE") {
+                msgBox.innerText = "رصيدك لا يكفي للرهان!";
+            } else {
+                msgBox.innerText = "حدث خطأ أثناء اللعب";
+            }
+            msgBox.style.color = "#f87171";
+        } finally {
+            setBusy(false);
         }
     };
 
-    window.adminSend = async function() {
-        const tid = document.getElementById('targetId').value.trim();
-        const amt = parseInt(document.getElementById('sendAmount').value);
-        const msgBox = document.getElementById('adminMsg');
+    window.withdraw = async function () {
+        if (isBusy) return;
+        setBusy(true);
 
-        if (!tid || !amt || amt <= 0) {
-            msgBox.innerText = "أدخل البيانات بشكل صحيح";
-            msgBox.style.color = "#f87171";
-            return;
-        }
+        const amt = parseInt(document.getElementById('withdrawAmount').value, 10);
+        const msg = document.getElementById('withdrawMsg');
 
         try {
-            const q = query(collection(db, "users"), where("customId", "==", tid));
-            const querySnapshot = await getDocs(q);
+            hideWithdrawWhatsApp();
+            msg.innerText = "";
 
-            if (querySnapshot.empty) {
+            if (!currentUserId) {
+                msg.innerText = "يجب تسجيل الدخول أولاً";
+                msg.style.color = "#f87171";
+                return;
+            }
+
+            if (!amt || amt <= 0) {
+                msg.innerText = "أدخل مبلغ صحيح";
+                msg.style.color = "#f87171";
+                return;
+            }
+
+            const userRef = doc(db, "users", currentUserId);
+
+            await runTransaction(db, async (tx) => {
+                const snap = await tx.get(userRef);
+                if (!snap.exists()) throw new Error("USER_NOT_FOUND");
+
+                const bal = Number(snap.data().balance || 0);
+                if (bal < amt) throw new Error("INSUFFICIENT_BALANCE");
+
+                tx.update(userRef, {
+                    balance: bal - amt
+                });
+            });
+
+            await addTransactionRecord({
+                fromId: currentUserCustomId || "UNKNOWN",
+                toId: "ADMIN",
+                amount: amt,
+                type: "WITHDRAW_REQUEST",
+                note: "طلب سحب",
+                involvedIds: [currentUserCustomId || "UNKNOWN", "ADMIN"]
+            });
+
+            msg.innerText = "✅ تم تسجيل طلب السحب بنجاح";
+            msg.style.color = "#4ade80";
+            showWithdrawWhatsApp(amt, currentUserCustomId);
+        } catch (err) {
+            console.error(err);
+            if (String(err?.message) === "INSUFFICIENT_BALANCE") {
+                msg.innerText = "رصيدك لا يكفي";
+            } else {
+                msg.innerText = "فشل تنفيذ طلب السحب";
+            }
+            msg.style.color = "#f87171";
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    window.transferCoins = async function () {
+        if (isBusy) return;
+        setBusy(true);
+
+        const tid = document.getElementById('transferId').value.trim();
+        const amt = parseInt(document.getElementById('transferAmount').value, 10);
+        const msgBox = document.getElementById('transferMsg');
+
+        try {
+            msgBox.innerText = "";
+
+            if (!currentUserId) {
+                msgBox.innerText = "يجب تسجيل الدخول أولاً";
+                msgBox.style.color = "#f87171";
+                return;
+            }
+
+            if (!tid || tid.length < 4) {
+                msgBox.innerText = "أدخل ID صحيح";
+                msgBox.style.color = "#f87171";
+                return;
+            }
+
+            if (!amt || amt <= 0) {
+                msgBox.innerText = "أدخل مبلغ صحيح";
+                msgBox.style.color = "#f87171";
+                return;
+            }
+
+            if (amt > MAX_TRANSFER) {
+                msgBox.innerText = `الحد الأقصى للتحويل هو ${formatCoins(MAX_TRANSFER)} كوينز`;
+                msgBox.style.color = "#f87171";
+                return;
+            }
+
+            if (tid === currentUserCustomId) {
+                msgBox.innerText = "لا يمكنك التحويل لنفسك";
+                msgBox.style.color = "#f87171";
+                return;
+            }
+
+            const targetRef = await getUserByCustomId(tid);
+            if (!targetRef) {
                 msgBox.innerText = "لا يوجد لاعب بهذا الـ ID";
                 msgBox.style.color = "#f87171";
                 return;
             }
 
-            const targetUserDoc = querySnapshot.docs[0];
+            const myRef = doc(db, "users", currentUserId);
 
-            await updateDoc(doc(db, "users", targetUserDoc.id), {
-                balance: increment(amt)
+            await runTransaction(db, async (tx) => {
+                const mySnap = await tx.get(myRef);
+                const targetSnap = await tx.get(targetRef);
+
+                if (!mySnap.exists() || !targetSnap.exists()) {
+                    throw new Error("USER_NOT_FOUND");
+                }
+
+                const myBal = Number(mySnap.data().balance || 0);
+                const targetBal = Number(targetSnap.data().balance || 0);
+
+                if (myBal < amt) {
+                    throw new Error("INSUFFICIENT_BALANCE");
+                }
+
+                tx.update(myRef, { balance: myBal - amt });
+                tx.update(targetRef, { balance: targetBal + amt });
             });
 
-            await addDoc(collection(db, "transactions"), {
+            await addTransactionRecord({
+                fromId: currentUserCustomId || "UNKNOWN",
+                toId: tid,
+                amount: amt,
+                type: "TRANSFER",
+                note: "تحويل رصيد",
+                involvedIds: [currentUserCustomId || "UNKNOWN", tid]
+            });
+
+            msgBox.innerText = `✅ تم تحويل ${formatCoins(amt)} كوينز بنجاح`;
+            msgBox.style.color = "#4ade80";
+        } catch (err) {
+            console.error(err);
+            if (String(err?.message) === "INSUFFICIENT_BALANCE") {
+                msgBox.innerText = "رصيدك لا يكفي";
+            } else {
+                msgBox.innerText = "فشل التحويل";
+            }
+            msgBox.style.color = "#f87171";
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    window.spinWheel = async function () {
+        if (isBusy) return;
+        setBusy(true);
+
+        const msg = document.getElementById('spinMsg');
+
+        try {
+            msg.innerText = "";
+
+            if (!currentUserId) {
+                msg.innerText = "يجب تسجيل الدخول أولاً";
+                msg.style.color = "#f87171";
+                return;
+            }
+
+            const userRef = doc(db, "users", currentUserId);
+            const reward = SPIN_REWARDS[Math.floor(Math.random() * SPIN_REWARDS.length)];
+
+            await runTransaction(db, async (tx) => {
+                const snap = await tx.get(userRef);
+                if (!snap.exists()) throw new Error("USER_NOT_FOUND");
+
+                const data = snap.data();
+                const spins = Number(data.spins || 0);
+                const bal = Number(data.balance || 0);
+
+                if (spins <= 0) {
+                    throw new Error("NO_SPINS");
+                }
+
+                tx.update(userRef, {
+                    spins: spins - 1,
+                    balance: bal + reward
+                });
+            });
+
+            await addTransactionRecord({
+                fromId: "WHEEL",
+                toId: currentUserCustomId || "UNKNOWN",
+                amount: reward,
+                type: "SPIN_WIN",
+                note: "جائزة عجلة الحظ",
+                involvedIds: [currentUserCustomId || "UNKNOWN", "WHEEL"]
+            });
+
+            msg.innerText = reward > 0
+                ? `🎉 كسبت ${formatCoins(reward)} كوينز من عجلة الحظ`
+                : "حظ أوفر، لم تربح هذه المرة";
+            msg.style.color = reward > 0 ? "#4ade80" : "#fbbf24";
+        } catch (err) {
+            console.error(err);
+            if (String(err?.message) === "NO_SPINS") {
+                msg.innerText = "❌ مفيش لفات متاحة حالياً";
+            } else {
+                msg.innerText = "حدث خطأ أثناء تشغيل العجلة";
+            }
+            msg.style.color = "#f87171";
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    window.adminRecharge = async function () {
+        if (isBusy) return;
+        setBusy(true);
+
+        const tid = document.getElementById('rechargeTargetId').value.trim();
+        const amt = parseInt(document.getElementById('rechargeAmount').value, 10);
+        const msg = document.getElementById('adminRechargeMsg');
+
+        try {
+            msg.innerText = "";
+
+            if (!currentUserIsAdmin) {
+                msg.innerText = "غير مسموح";
+                msg.style.color = "#f87171";
+                return;
+            }
+
+            if (!tid || !amt || amt <= 0) {
+                msg.innerText = "أدخل البيانات بشكل صحيح";
+                msg.style.color = "#f87171";
+                return;
+            }
+
+            const targetRef = await getUserByCustomId(tid);
+            if (!targetRef) {
+                msg.innerText = "لا يوجد لاعب بهذا الـ ID";
+                msg.style.color = "#f87171";
+                return;
+            }
+
+            await runTransaction(db, async (tx) => {
+                const snap = await tx.get(targetRef);
+                if (!snap.exists()) throw new Error("USER_NOT_FOUND");
+
+                const data = snap.data();
+                const bal = Number(data.balance || 0);
+                const spins = Number(data.spins || 0);
+
+                tx.update(targetRef, {
+                    balance: bal + amt,
+                    spins: spins + 1
+                });
+            });
+
+            await addTransactionRecord({
                 fromId: "ADMIN",
                 toId: tid,
                 amount: amt,
-                involvedIds: [tid, "ADMIN"],
-                timestamp: serverTimestamp(),
-                type: "ADMIN_SEND"
+                type: "RECHARGE",
+                note: "شحن + فرصة لفة",
+                involvedIds: [tid, "ADMIN"]
             });
 
-            msgBox.innerText = `تم إرسال ${amt} كوينز بنجاح`;
+            msg.innerText = `✅ تم شحن ${formatCoins(amt)} كوينز وإضافة لفة`;
+            msg.style.color = "#4ade80";
+        } catch (err) {
+            console.error(err);
+            msg.innerText = "فشل تنفيذ الشحن";
+            msg.style.color = "#f87171";
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    window.adminSend = async function () {
+        if (isBusy) return;
+        setBusy(true);
+
+        const tid = document.getElementById('targetId').value.trim();
+        const amt = parseInt(document.getElementById('sendAmount').value, 10);
+        const msgBox = document.getElementById('adminMsg');
+
+        try {
+            msgBox.innerText = "";
+
+            if (!currentUserIsAdmin) {
+                msgBox.innerText = "غير مسموح";
+                msgBox.style.color = "#f87171";
+                return;
+            }
+
+            if (!tid || !amt || amt <= 0) {
+                msgBox.innerText = "أدخل البيانات بشكل صحيح";
+                msgBox.style.color = "#f87171";
+                return;
+            }
+
+            const targetRef = await getUserByCustomId(tid);
+            if (!targetRef) {
+                msgBox.innerText = "لا يوجد لاعب بهذا الـ ID";
+                msgBox.style.color = "#f87171";
+                return;
+            }
+
+            await runTransaction(db, async (tx) => {
+                const snap = await tx.get(targetRef);
+                if (!snap.exists()) throw new Error("USER_NOT_FOUND");
+
+                const bal = Number(snap.data().balance || 0);
+                tx.update(targetRef, {
+                    balance: bal + amt
+                });
+            });
+
+            await addTransactionRecord({
+                fromId: "ADMIN",
+                toId: tid,
+                amount: amt,
+                type: "ADMIN_SEND",
+                note: "إرسال إداري",
+                involvedIds: [tid, "ADMIN"]
+            });
+
+            msgBox.innerText = `✅ تم إرسال ${formatCoins(amt)} كوينز بنجاح`;
             msgBox.style.color = "#4ade80";
         } catch (err) {
             console.error(err);
             msgBox.innerText = "فشل إرسال الكوينز";
             msgBox.style.color = "#f87171";
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    window.generateMillion = async function () {
+        if (isBusy) return;
+        setBusy(true);
+
+        const msg = document.getElementById('millMsg');
+
+        try {
+            msg.innerText = "";
+
+            if (!currentUserId) {
+                msg.innerText = "يجب تسجيل الدخول أولاً";
+                msg.style.color = "#f87171";
+                return;
+            }
+
+            const userRef = doc(db, "users", currentUserId);
+
+            await runTransaction(db, async (tx) => {
+                const snap = await tx.get(userRef);
+                if (!snap.exists()) throw new Error("USER_NOT_FOUND");
+
+                const bal = Number(snap.data().balance || 0);
+                tx.update(userRef, {
+                    balance: bal + 1000000
+                });
+            });
+
+            msg.innerText = "✅ تمت إضافة مليون كوينز بنجاح!";
+            msg.style.color = "#4ade80";
+        } catch (err) {
+            console.error(err);
+            msg.innerText = "فشل تنفيذ العملية";
+            msg.style.color = "#f87171";
+        } finally {
+            setBusy(false);
         }
     };
 
