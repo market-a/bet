@@ -22,6 +22,7 @@
         .in { color: #4ade80; } /* استلام */
         .out { color: #f87171; } /* إرسال */
         
+        .game-area { border: 2px dashed #38bdf8; padding: 20px; border-radius: 12px; margin-top: 25px; background: #131e32; }
         .admin-panel { border: 2px solid #ef4444; padding: 20px; border-radius: 12px; margin-top: 20px; }
     </style>
 </head>
@@ -46,6 +47,13 @@
 
         <a href="https://wa.me/+201124680211" target="_blank" class="whatsapp-btn">شحن عن طريق الواتساب</a>
 
+        <div class="game-area">
+            <h3>🍎 لعبة التفاحة (نسبة الفوز 20%)</h3>
+            <input type="number" id="betAmount" placeholder="أدخل مبلغ الرهان">
+            <button onclick="playGame()" style="background-color: #8b5cf6;">إلعب الآن</button>
+            <p id="gameResult" style="font-weight: bold; margin-top: 10px;"></p>
+        </div>
+
         <div class="history-section">
             <h3>📜 سجل آخر 20 عملية</h3>
             <table>
@@ -66,7 +74,8 @@
     </div>
 
     <div id="adminSection" class="admin-panel hidden">
-        <h3 style="color: #ef4444;">لوحة التحكم (أدمن)</h3>
+        <h3 style="color: #ef4444;">👑 لوحة التحكم (الأدمن)</h3>
+        <p style="color: #6ee7b7;">أهلاً بك، أنت المدير. يمكنك توليد الكوينز وإرسالها لأي ID.</p>
         <button onclick="generateAdminCoins()" style="background-color: #7c3aed;">توليد 1,000,000 كوينز</button>
         <hr>
         <h4>إرسال كوينز للاعب</h4>
@@ -83,7 +92,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-    // إعداداتك الخاصة التي أرفقتها
+    // الإعدادات الخاصة بمشروعك
     const firebaseConfig = {
         apiKey: "AIzaSyBhIrY6VIp4VmxhFzyfpYGHK2MfNiuaflw",
         authDomain: "medobet-e65fe.firebaseapp.com",
@@ -98,59 +107,82 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    let currentUserDoc = null;
     let userData = null;
 
-    // تسجيل جديد
+    // دالة إنشاء حساب جديد
     function register() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
+        // إنشاء ID عشوائي من 8 أرقام
         const customId = Math.floor(10000000 + Math.random() * 90000000).toString();
 
         auth.createUserWithEmailAndPassword(email, password)
             .then((res) => {
+                // تحديد ما إذا كان هو الأدمن أم لا
+                const isAdmin = (email === "1@gmail.com");
+
                 db.collection("users").doc(res.user.uid).set({
                     email: email,
                     balance: 0,
                     customId: customId,
-                    isAdmin: (email === "1@admin.com")
+                    isAdmin: isAdmin
                 });
-            }).catch(err => alert(err.message));
+                alert("تم إنشاء الحساب بنجاح!");
+            }).catch(err => {
+                document.getElementById('authError').innerText = err.message;
+            });
     }
 
-    // دخول
+    // دالة تسجيل الدخول
     function login() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-        auth.signInWithEmailAndPassword(email, password).catch(err => alert(err.message));
+        auth.signInWithEmailAndPassword(email, password)
+            .catch(err => {
+                document.getElementById('authError').innerText = err.message;
+            });
     }
 
-    function logout() { auth.signOut(); }
+    // دالة تسجيل الخروج
+    function logout() {
+        auth.signOut();
+    }
 
-    // متابعة الحالة وجلب السجل
+    // مراقبة حالة تسجيل الدخول
     auth.onAuthStateChanged((user) => {
         if (user) {
             document.getElementById('authSection').classList.add('hidden');
-            db.collection("users").doc(user.uid).onSnapshot(doc => {
-                userData = doc.data();
-                document.getElementById('userIdDisplay').innerText = userData.customId;
-                document.getElementById('userBalance').innerText = userData.balance;
+            
+            currentUserDoc = user.uid;
 
-                if (userData.isAdmin) {
-                    document.getElementById('adminSection').classList.remove('hidden');
-                    document.getElementById('userSection').classList.add('hidden');
-                } else {
-                    document.getElementById('userSection').classList.remove('hidden');
-                    loadHistory(userData.customId);
+            db.collection("users").doc(user.uid).onSnapshot(doc => {
+                if (doc.exists) {
+                    userData = doc.data();
+                    
+                    document.getElementById('userIdDisplay').innerText = userData.customId;
+                    document.getElementById('userBalance').innerText = userData.balance;
+
+                    // التحقق إذا كان الأدمن باستخدام البريد المحدد
+                    if (userData.email === "1@gmail.com") {
+                        document.getElementById('adminSection').classList.remove('hidden');
+                        document.getElementById('userSection').classList.add('hidden');
+                    } else {
+                        document.getElementById('userSection').classList.remove('hidden');
+                        document.getElementById('adminSection').classList.add('hidden');
+                        loadHistory(userData.customId);
+                    }
                 }
             });
         } else {
             document.getElementById('authSection').classList.remove('hidden');
             document.getElementById('userSection').classList.add('hidden');
             document.getElementById('adminSection').classList.add('hidden');
+            currentUserDoc = null;
         }
     });
 
-    // دالة جلب سجل العمليات (آخر 20)
+    // جلب سجل التحويلات (آخر 20 عملية)
     function loadHistory(myId) {
         db.collection("transactions")
             .where("involvedIds", "array-contains", myId)
@@ -176,41 +208,96 @@
             });
     }
 
-    // إرسال كوينز من الأدمن (مع تسجيل العملية)
-    function sendCoins() {
-        const targetId = document.getElementById('targetId').value;
-        const amount = parseInt(document.getElementById('transferAmount').value);
-        
-        if (!targetId || !amount) return alert("أدخل البيانات");
+    // دالة لعبة التفاحة (نسبة الربح 20%)
+    function playGame() {
+        const betAmount = parseInt(document.getElementById('betAmount').value);
+        const resultText = document.getElementById('gameResult');
 
-        db.collection("users").where("customId", "==", targetId).get().then(snap => {
-            if (snap.empty) return alert("ID غير موجود");
+        if (!betAmount || betAmount <= 0) {
+            resultText.innerText = "أدخل مبلغاً صحيحاً!";
+            resultText.style.color = "#f87171";
+            return;
+        }
 
-            const receiverDoc = snap.docs[0];
-            const receiverUid = receiverDoc.id;
+        db.collection("users").doc(currentUserDoc).get().then(doc => {
+            const currentBalance = doc.data().balance;
+            if (currentBalance < betAmount) {
+                resultText.innerText = "رصيدك لا يكفي للرهان!";
+                resultText.style.color = "#f87171";
+                return;
+            }
 
-            // 1. تحديث رصيد المستلم
-            db.collection("users").doc(receiverUid).update({
-                balance: firebase.firestore.FieldValue.increment(amount)
-            });
+            // سحب مبلغ الرهان أولاً
+            let newBalance = currentBalance - betAmount;
+            
+            // تحديد المكسب أو الخسارة
+            const randomChance = Math.random();
+            if (randomChance <= 0.20) { // فوز بنسبة 20%
+                const winAmount = betAmount * 2;
+                newBalance += winAmount;
+                resultText.innerText = `🎉 مبروك! ربحت ${winAmount} كوينز!`;
+                resultText.style.color = "#4ade80";
+            } else { // خسارة
+                resultText.innerText = "😢 حظ أوفر، لقد خسرت الرهان.";
+                resultText.style.color = "#f87171";
+            }
 
-            // 2. تسجيل العملية في السجل
-            db.collection("transactions").add({
-                fromId: "ADMIN",
-                toId: targetId,
-                amount: amount,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                involvedIds: [targetId, "ADMIN"] // لتسهيل البحث
-            });
-
-            alert("تم التحويل وتسجيل العملية بنجاح");
+            // تحديث الرصيد في قاعدة البيانات
+            db.collection("users").doc(currentUserDoc).update({ balance: newBalance });
         });
     }
 
+    // وظائف لوحة التحكم (الأدمن)
     function generateAdminCoins() {
-        db.collection("users").doc(auth.currentUser.uid).update({
+        db.collection("users").doc(currentUserDoc).update({
             balance: firebase.firestore.FieldValue.increment(1000000)
+        }).then(() => {
+            alert("تمت إضافة المليون كوينز لرصيدك كأدمن بنجاح!");
         });
+    }
+
+    function sendCoins() {
+        const targetId = document.getElementById('targetId').value;
+        const amount = parseInt(document.getElementById('transferAmount').value);
+        const msg = document.getElementById('adminMessage');
+
+        if (!targetId || !amount || amount <= 0) {
+            msg.innerText = "تأكد من إدخال الـ ID والمبلغ بشكل صحيح.";
+            msg.style.color = "#f87171";
+            return;
+        }
+
+        // البحث عن المستخدم باستخدام الـ ID
+        db.collection("users").where("customId", "==", targetId).get()
+            .then(snap => {
+                if (snap.empty) {
+                    msg.innerText = "لم يتم العثور على لاعب بهذا الـ ID.";
+                    msg.style.color = "#f87171";
+                    return;
+                }
+
+                snap.forEach(doc => {
+                    // تحديث رصيد اللاعب
+                    db.collection("users").doc(doc.id).update({
+                        balance: firebase.firestore.FieldValue.increment(amount)
+                    }).then(() => {
+                        // إضافة السجل
+                        db.collection("transactions").add({
+                            fromId: "ADMIN",
+                            toId: targetId,
+                            amount: amount,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            involvedIds: [targetId, "ADMIN"]
+                        });
+
+                        msg.innerText = `تم إرسال ${amount} كوينز للاعب ${targetId} بنجاح.`;
+                        msg.style.color = "#10b981";
+                    });
+                });
+            })
+            .catch(err => {
+                msg.innerText = "خطأ: " + err.message;
+            });
     }
 </script>
 </body>
