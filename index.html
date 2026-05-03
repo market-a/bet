@@ -11,7 +11,10 @@
         button { background-color: #10b981; cursor: pointer; font-weight: bold; border: none; transition: 0.3s; }
         button:hover { background-color: #059669; }
         .balance-box { background: linear-gradient(135deg, #f59e0b, #d97706); padding: 20px; border-radius: 12px; font-size: 24px; font-weight: bold; margin-bottom: 20px; }
-        .hidden { display: none; }
+        
+        /* تأكيد إخفاء العناصر بفعالية */
+        .hidden { display: none !important; }
+        
         .whatsapp-btn { background-color: #25D366; color: white; text-decoration: none; padding: 12px; border-radius: 8px; display: block; margin: 10px auto; width: 85%; font-weight: bold; }
         
         /* تصميم الجدول */
@@ -36,7 +39,7 @@
         <input type="password" id="password" placeholder="كلمة المرور">
         <button onclick="login()">دخول</button>
         <button onclick="register()" style="background-color: #3b82f6;">إنشاء حساب جديد</button>
-        <p id="authError" style="color: #f87171;"></p>
+        <p id="authError" style="color: #f87171; font-weight: bold; margin-top: 10px;"></p>
     </div>
 
     <div id="userSection" class="hidden">
@@ -75,15 +78,20 @@
 
     <div id="adminSection" class="admin-panel hidden">
         <h3 style="color: #ef4444;">👑 لوحة التحكم (الأدمن)</h3>
-        <p style="color: #6ee7b7;">أهلاً بك، أنت المدير. يمكنك توليد الكوينز وإرسالها لأي ID.</p>
+        <p style="color: #6ee7b7;">أهلاً بك، يمكنك توليد الكوينز وإرسالها لأي ID.</p>
+        
+        <div class="balance-box" style="background: #334155; font-size: 18px;">
+            رصيد الخزنة: <span id="adminBalance">0</span> كوينز
+        </div>
+
         <button onclick="generateAdminCoins()" style="background-color: #7c3aed;">توليد 1,000,000 كوينز</button>
-        <hr>
+        <hr style="border-color: #475569;">
         <h4>إرسال كوينز للاعب</h4>
         <input type="number" id="targetId" placeholder="ID اللاعب (8 أرقام)">
         <input type="number" id="transferAmount" placeholder="عدد الكوينز">
         <button onclick="sendCoins()">إرسال الآن</button>
-        <p id="adminMessage"></p>
-        <button onclick="logout()" style="background-color: #64748b;">خروج</button>
+        <p id="adminMessage" style="font-weight: bold;"></p>
+        <button onclick="logout()" style="background-color: #64748b; margin-top: 20px;">خروج</button>
     </div>
 </div>
 
@@ -103,86 +111,108 @@
         measurementId: "G-9GMH9TW1ZQ"
     };
 
+    // تهيئة Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
     let currentUserDoc = null;
-    let userData = null;
 
-    // دالة إنشاء حساب جديد
+    // --- دوال التسجيل والدخول ---
     function register() {
-        const email = document.getElementById('email').value;
+        const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
-        // إنشاء ID عشوائي من 8 أرقام
+        const msg = document.getElementById('authError');
+        
+        if(password.length < 6) {
+            msg.innerText = "كلمة المرور يجب أن لا تقل عن 6 أحرف/أرقام";
+            return;
+        }
+
+        msg.innerText = "جاري إنشاء الحساب...";
+        msg.style.color = "#38bdf8";
+
         const customId = Math.floor(10000000 + Math.random() * 90000000).toString();
+        const isAdmin = (email === "1@gmail.com");
 
         auth.createUserWithEmailAndPassword(email, password)
             .then((res) => {
-                // تحديد ما إذا كان هو الأدمن أم لا
-                const isAdmin = (email === "1@gmail.com");
-
-                db.collection("users").doc(res.user.uid).set({
+                // حفظ البيانات في القاعدة والتأكد من إتمام العملية
+                return db.collection("users").doc(res.user.uid).set({
                     email: email,
                     balance: 0,
                     customId: customId,
                     isAdmin: isAdmin
                 });
-                alert("تم إنشاء الحساب بنجاح!");
-            }).catch(err => {
-                document.getElementById('authError').innerText = err.message;
+            })
+            .then(() => {
+                msg.innerText = "تم إنشاء الحساب بنجاح!";
+                msg.style.color = "#4ade80";
+            })
+            .catch(err => {
+                msg.innerText = "خطأ: " + err.message;
+                msg.style.color = "#f87171";
             });
     }
 
-    // دالة تسجيل الدخول
     function login() {
-        const email = document.getElementById('email').value;
+        const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
+        document.getElementById('authError').innerText = "جاري الدخول...";
+        
         auth.signInWithEmailAndPassword(email, password)
             .catch(err => {
-                document.getElementById('authError').innerText = err.message;
+                document.getElementById('authError').innerText = "بيانات الدخول غير صحيحة!";
+                document.getElementById('authError').style.color = "#f87171";
             });
     }
 
-    // دالة تسجيل الخروج
     function logout() {
         auth.signOut();
     }
 
-    // مراقبة حالة تسجيل الدخول
+    // --- مراقبة حالة المستخدم وتغيير الشاشات ---
     auth.onAuthStateChanged((user) => {
         if (user) {
+            // إخفاء شاشة الدخول أولاً
             document.getElementById('authSection').classList.add('hidden');
-            
             currentUserDoc = user.uid;
 
+            // جلب البيانات من Firestore
             db.collection("users").doc(user.uid).onSnapshot(doc => {
                 if (doc.exists) {
-                    userData = doc.data();
+                    const userData = doc.data();
                     
-                    document.getElementById('userIdDisplay').innerText = userData.customId;
-                    document.getElementById('userBalance').innerText = userData.balance;
-
-                    // التحقق إذا كان الأدمن باستخدام البريد المحدد
                     if (userData.email === "1@gmail.com") {
+                        // شاشة الأدمن
+                        document.getElementById('adminBalance').innerText = userData.balance;
                         document.getElementById('adminSection').classList.remove('hidden');
                         document.getElementById('userSection').classList.add('hidden');
                     } else {
+                        // شاشة المستخدم العادي
+                        document.getElementById('userIdDisplay').innerText = userData.customId;
+                        document.getElementById('userBalance').innerText = userData.balance;
                         document.getElementById('userSection').classList.remove('hidden');
                         document.getElementById('adminSection').classList.add('hidden');
+                        
+                        // تحميل السجل
                         loadHistory(userData.customId);
                     }
                 }
+            }, (error) => {
+                alert("تعذر جلب البيانات. الرجاء التأكد من تفعيل Firestore واختيار Test Mode. رسالة الخطأ: " + error.message);
             });
         } else {
+            // عند الخروج
             document.getElementById('authSection').classList.remove('hidden');
             document.getElementById('userSection').classList.add('hidden');
             document.getElementById('adminSection').classList.add('hidden');
+            document.getElementById('authError').innerText = "";
             currentUserDoc = null;
         }
     });
 
-    // جلب سجل التحويلات (آخر 20 عملية)
+    // --- جلب السجل ---
     function loadHistory(myId) {
         db.collection("transactions")
             .where("involvedIds", "array-contains", myId)
@@ -190,31 +220,38 @@
             .limit(20)
             .onSnapshot(snapshot => {
                 let html = "";
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const isReceiver = (data.toId === myId);
-                    const type = isReceiver ? "<span class='in'>استلام +</span>" : "<span class='out'>إرسال -</span>";
-                    const otherParty = isReceiver ? data.fromId : data.toId;
-                    const date = data.timestamp ? data.timestamp.toDate().toLocaleString('ar-EG') : "جاري التحميل...";
-                    
-                    html += `<tr>
-                        <td>${type}</td>
-                        <td>${otherParty}</td>
-                        <td>${data.amount}</td>
-                        <td>${date}</td>
-                    </tr>`;
-                });
+                if (snapshot.empty) {
+                    html = "<tr><td colspan='4'>لا توجد عمليات تحويل سابقة</td></tr>";
+                } else {
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const isReceiver = (data.toId === myId);
+                        const type = isReceiver ? "<span class='in'>استلام +</span>" : "<span class='out'>إرسال -</span>";
+                        const otherParty = isReceiver ? data.fromId : data.toId;
+                        const date = data.timestamp ? data.timestamp.toDate().toLocaleString('ar-EG') : "الآن";
+                        
+                        html += `<tr>
+                            <td>${type}</td>
+                            <td>${otherParty}</td>
+                            <td>${data.amount}</td>
+                            <td>${date}</td>
+                        </tr>`;
+                    });
+                }
                 document.getElementById('historyBody').innerHTML = html;
+            }, (error) => {
+                console.error("خطأ في جلب السجل:", error);
+                document.getElementById('historyBody').innerHTML = `<tr><td colspan='4' style='color:#f87171;'>الرجاء الموافقة على إنشاء الـ Index في منصة فايربيز (ابحث في الـ Console)</td></tr>`;
             });
     }
 
-    // دالة لعبة التفاحة (نسبة الربح 20%)
+    // --- لعبة التفاحة ---
     function playGame() {
         const betAmount = parseInt(document.getElementById('betAmount').value);
         const resultText = document.getElementById('gameResult');
 
         if (!betAmount || betAmount <= 0) {
-            resultText.innerText = "أدخل مبلغاً صحيحاً!";
+            resultText.innerText = "أدخل مبلغ رهان صحيح!";
             resultText.style.color = "#f87171";
             return;
         }
@@ -222,37 +259,35 @@
         db.collection("users").doc(currentUserDoc).get().then(doc => {
             const currentBalance = doc.data().balance;
             if (currentBalance < betAmount) {
-                resultText.innerText = "رصيدك لا يكفي للرهان!";
+                resultText.innerText = "رصيدك غير كافٍ!";
                 resultText.style.color = "#f87171";
                 return;
             }
 
-            // سحب مبلغ الرهان أولاً
             let newBalance = currentBalance - betAmount;
             
-            // تحديد المكسب أو الخسارة
-            const randomChance = Math.random();
-            if (randomChance <= 0.20) { // فوز بنسبة 20%
+            // 20% فرصة للربح
+            if (Math.random() <= 0.20) { 
                 const winAmount = betAmount * 2;
                 newBalance += winAmount;
                 resultText.innerText = `🎉 مبروك! ربحت ${winAmount} كوينز!`;
                 resultText.style.color = "#4ade80";
-            } else { // خسارة
-                resultText.innerText = "😢 حظ أوفر، لقد خسرت الرهان.";
+            } else { 
+                resultText.innerText = "😢 حظ أوفر، خسرت الرهان.";
                 resultText.style.color = "#f87171";
             }
 
-            // تحديث الرصيد في قاعدة البيانات
             db.collection("users").doc(currentUserDoc).update({ balance: newBalance });
         });
     }
 
-    // وظائف لوحة التحكم (الأدمن)
+    // --- وظائف الأدمن ---
     function generateAdminCoins() {
         db.collection("users").doc(currentUserDoc).update({
             balance: firebase.firestore.FieldValue.increment(1000000)
         }).then(() => {
-            alert("تمت إضافة المليون كوينز لرصيدك كأدمن بنجاح!");
+            document.getElementById('adminMessage').innerText = "تمت إضافة مليون كوينز لخزنتك بنجاح!";
+            document.getElementById('adminMessage').style.color = "#4ade80";
         });
     }
 
@@ -262,26 +297,24 @@
         const msg = document.getElementById('adminMessage');
 
         if (!targetId || !amount || amount <= 0) {
-            msg.innerText = "تأكد من إدخال الـ ID والمبلغ بشكل صحيح.";
+            msg.innerText = "أدخل الـ ID والمبلغ بشكل صحيح!";
             msg.style.color = "#f87171";
             return;
         }
 
-        // البحث عن المستخدم باستخدام الـ ID
+        // خصم الرصيد من الأدمن أولاً للتأكد من وجود رصيد بالخزنة (اختياري لكنه أكثر منطقية)
         db.collection("users").where("customId", "==", targetId).get()
             .then(snap => {
                 if (snap.empty) {
-                    msg.innerText = "لم يتم العثور على لاعب بهذا الـ ID.";
+                    msg.innerText = "لا يوجد حساب بهذا الـ ID.";
                     msg.style.color = "#f87171";
                     return;
                 }
 
                 snap.forEach(doc => {
-                    // تحديث رصيد اللاعب
                     db.collection("users").doc(doc.id).update({
                         balance: firebase.firestore.FieldValue.increment(amount)
                     }).then(() => {
-                        // إضافة السجل
                         db.collection("transactions").add({
                             fromId: "ADMIN",
                             toId: targetId,
@@ -291,14 +324,16 @@
                         });
 
                         msg.innerText = `تم إرسال ${amount} كوينز للاعب ${targetId} بنجاح.`;
-                        msg.style.color = "#10b981";
+                        msg.style.color = "#4ade80";
                     });
                 });
             })
             .catch(err => {
-                msg.innerText = "خطأ: " + err.message;
+                msg.innerText = "حدث خطأ: " + err.message;
+                msg.style.color = "#f87171";
             });
     }
 </script>
+
 </body>
 </html>
