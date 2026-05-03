@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ميدو بيت - نظام العملات</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: white; text-align: center; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: #1e293b; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        input, button { width: 90%; margin: 10px 0; padding: 12px; border-radius: 8px; border: 1px solid #334155; font-size: 16px; background: #0f172a; color: white; }
+        button { background-color: #10b981; cursor: pointer; font-weight: bold; border: none; transition: 0.3s; }
+        button:hover { background-color: #059669; }
+        .balance-box { background: linear-gradient(135deg, #f59e0b, #d97706); padding: 20px; border-radius: 12px; font-size: 24px; font-weight: bold; margin-bottom: 20px; }
+        .hidden { display: none; }
+        .whatsapp-btn { background-color: #25D366; color: white; text-decoration: none; padding: 12px; border-radius: 8px; display: block; margin: 10px auto; width: 85%; font-weight: bold; }
+        
+        /* تصميم الجدول */
+        .history-section { margin-top: 30px; text-align: right; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; background: #334155; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #475569; }
+        th { background-color: #475569; color: #fbbf24; }
+        .in { color: #4ade80; } /* استلام */
+        .out { color: #f87171; } /* إرسال */
+        
+        .admin-panel { border: 2px solid #ef4444; padding: 20px; border-radius: 12px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 style="color: #38bdf8;">MEDO BET</h2>
+
+    <div id="authSection">
+        <input type="email" id="email" placeholder="البريد الإلكتروني">
+        <input type="password" id="password" placeholder="كلمة المرور">
+        <button onclick="login()">دخول</button>
+        <button onclick="register()" style="background-color: #3b82f6;">إنشاء حساب جديد</button>
+        <p id="authError" style="color: #f87171;"></p>
+    </div>
+
+    <div id="userSection" class="hidden">
+        <div class="balance-box">
+            رصيدك: <span id="userBalance">0</span> كوينز<br>
+            <small style="font-size: 14px; color: #eee;">ID الحساب: <span id="userIdDisplay"></span></small>
+        </div>
+
+        <a href="https://wa.me/+201124680211" target="_blank" class="whatsapp-btn">شحن عن طريق الواتساب</a>
+
+        <div class="history-section">
+            <h3>📜 سجل آخر 20 عملية</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>النوع</th>
+                        <th>الطرف الآخر</th>
+                        <th>المبلغ</th>
+                        <th>التاريخ</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody">
+                    </tbody>
+            </table>
+        </div>
+
+        <button onclick="logout()" style="background-color: #64748b; margin-top: 30px;">تسجيل خروج</button>
+    </div>
+
+    <div id="adminSection" class="admin-panel hidden">
+        <h3 style="color: #ef4444;">لوحة التحكم (أدمن)</h3>
+        <button onclick="generateAdminCoins()" style="background-color: #7c3aed;">توليد 1,000,000 كوينز</button>
+        <hr>
+        <h4>إرسال كوينز للاعب</h4>
+        <input type="number" id="targetId" placeholder="ID اللاعب (8 أرقام)">
+        <input type="number" id="transferAmount" placeholder="عدد الكوينز">
+        <button onclick="sendCoins()">إرسال الآن</button>
+        <p id="adminMessage"></p>
+        <button onclick="logout()" style="background-color: #64748b;">خروج</button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+    // إعداداتك الخاصة التي أرفقتها
+    const firebaseConfig = {
+        apiKey: "AIzaSyBhIrY6VIp4VmxhFzyfpYGHK2MfNiuaflw",
+        authDomain: "medobet-e65fe.firebaseapp.com",
+        projectId: "medobet-e65fe",
+        storageBucket: "medobet-e65fe.firebasestorage.app",
+        messagingSenderId: "257706037859",
+        appId: "1:257706037859:web:acd2d7eff8109fad15de56",
+        measurementId: "G-9GMH9TW1ZQ"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let userData = null;
+
+    // تسجيل جديد
+    function register() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const customId = Math.floor(10000000 + Math.random() * 90000000).toString();
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .then((res) => {
+                db.collection("users").doc(res.user.uid).set({
+                    email: email,
+                    balance: 0,
+                    customId: customId,
+                    isAdmin: (email === "1@admin.com")
+                });
+            }).catch(err => alert(err.message));
+    }
+
+    // دخول
+    function login() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        auth.signInWithEmailAndPassword(email, password).catch(err => alert(err.message));
+    }
+
+    function logout() { auth.signOut(); }
+
+    // متابعة الحالة وجلب السجل
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            document.getElementById('authSection').classList.add('hidden');
+            db.collection("users").doc(user.uid).onSnapshot(doc => {
+                userData = doc.data();
+                document.getElementById('userIdDisplay').innerText = userData.customId;
+                document.getElementById('userBalance').innerText = userData.balance;
+
+                if (userData.isAdmin) {
+                    document.getElementById('adminSection').classList.remove('hidden');
+                    document.getElementById('userSection').classList.add('hidden');
+                } else {
+                    document.getElementById('userSection').classList.remove('hidden');
+                    loadHistory(userData.customId);
+                }
+            });
+        } else {
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('userSection').classList.add('hidden');
+            document.getElementById('adminSection').classList.add('hidden');
+        }
+    });
+
+    // دالة جلب سجل العمليات (آخر 20)
+    function loadHistory(myId) {
+        db.collection("transactions")
+            .where("involvedIds", "array-contains", myId)
+            .orderBy("timestamp", "desc")
+            .limit(20)
+            .onSnapshot(snapshot => {
+                let html = "";
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const isReceiver = (data.toId === myId);
+                    const type = isReceiver ? "<span class='in'>استلام +</span>" : "<span class='out'>إرسال -</span>";
+                    const otherParty = isReceiver ? data.fromId : data.toId;
+                    const date = data.timestamp ? data.timestamp.toDate().toLocaleString('ar-EG') : "جاري التحميل...";
+                    
+                    html += `<tr>
+                        <td>${type}</td>
+                        <td>${otherParty}</td>
+                        <td>${data.amount}</td>
+                        <td>${date}</td>
+                    </tr>`;
+                });
+                document.getElementById('historyBody').innerHTML = html;
+            });
+    }
+
+    // إرسال كوينز من الأدمن (مع تسجيل العملية)
+    function sendCoins() {
+        const targetId = document.getElementById('targetId').value;
+        const amount = parseInt(document.getElementById('transferAmount').value);
+        
+        if (!targetId || !amount) return alert("أدخل البيانات");
+
+        db.collection("users").where("customId", "==", targetId).get().then(snap => {
+            if (snap.empty) return alert("ID غير موجود");
+
+            const receiverDoc = snap.docs[0];
+            const receiverUid = receiverDoc.id;
+
+            // 1. تحديث رصيد المستلم
+            db.collection("users").doc(receiverUid).update({
+                balance: firebase.firestore.FieldValue.increment(amount)
+            });
+
+            // 2. تسجيل العملية في السجل
+            db.collection("transactions").add({
+                fromId: "ADMIN",
+                toId: targetId,
+                amount: amount,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                involvedIds: [targetId, "ADMIN"] // لتسهيل البحث
+            });
+
+            alert("تم التحويل وتسجيل العملية بنجاح");
+        });
+    }
+
+    function generateAdminCoins() {
+        db.collection("users").doc(auth.currentUser.uid).update({
+            balance: firebase.firestore.FieldValue.increment(1000000)
+        });
+    }
+</script>
+</body>
+</html>
