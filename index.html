@@ -5,26 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ميدو بيت - النظام المتكامل (تحديث v9)</title>
     <style>
-        :root { --primary: #10b981; --bg: #0f172a; --card: #1e293b; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: white; text-align: center; margin: 0; padding: 20px; }
-        .container { max-width: 500px; margin: auto; background: var(--card); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
-        input { width: 90%; margin: 10px 0; padding: 12px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; text-align: center; font-size: 16px; }
-        button { width: 95%; margin: 10px 0; padding: 12px; border-radius: 8px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 16px; }
-        button:hover { opacity: 0.8; transform: translateY(-2px); }
-        
-        .balance-box { background: linear-gradient(45deg, #f59e0b, #d97706); padding: 20px; border-radius: 15px; font-size: 22px; font-weight: bold; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
-        .hidden { display: none !important; }
-        
-        .whatsapp-btn { background-color: #25D366; color: white; text-decoration: none; padding: 15px; border-radius: 10px; display: block; margin: 15px auto; font-weight: bold; width: 85%; }
-        
-        .game-card { background: #131e32; border: 2px solid #38bdf8; padding: 15px; border-radius: 15px; margin-top: 20px; }
-        .history-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; background: #334155; border-radius: 10px; overflow: hidden; }
-        th, td { padding: 10px; border-bottom: 1px solid #475569; text-align: center; }
-        th { background: #475569; color: #fbbf24; }
-        .in { color: #4ade80; } .out { color: #f87171; }
+        :root {
+            --primary: #10b981;
+            --bg: #0f172a;
+            --card: #1e293b;
+        }
 
-        #loading { padding: 50px; font-size: 20px; color: #38bdf8; font-weight: bold; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: var(--bg);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: var(--card);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        input {
+            width: 90%;
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+            font-size: 16px;
+            outline: none;
+        }
+
+        button {
+            width: 95%;
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        button:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+
+        .balance-box {
+            background: linear-gradient(45deg, #f59e0b, #d97706);
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .hidden { display: none !important; }
+
+        .whatsapp-btn {
+            background-color: #25D366;
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 10px;
+            display: block;
+            margin: 15px auto;
+            font-weight: bold;
+            width: 85%;
+        }
+
+        .game-card {
+            background: #131e32;
+            border: 2px solid #38bdf8;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 13px;
+            background: #334155;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #475569;
+            text-align: center;
+        }
+
+        th {
+            background: #475569;
+            color: #fbbf24;
+        }
+
+        .in { color: #4ade80; }
+        .out { color: #f87171; }
+
+        #loading {
+            padding: 50px;
+            font-size: 20px;
+            color: #38bdf8;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -50,7 +148,7 @@
             <small style="font-size: 13px;">ID الحساب: <span id="u_id" style="color: #0f172a;">--------</span></small>
         </div>
 
-        <a href="https://wa.me/+201124680211" target="_blank" class="whatsapp-btn">
+        <a href="https://wa.me/201124680211" target="_blank" class="whatsapp-btn" rel="noopener">
             🟢 اضغط هنا للشحن (واتساب)
         </a>
 
@@ -70,6 +168,7 @@
                 <tbody id="historyBody"></tbody>
             </table>
         </div>
+
         <button onclick="logout()" style="background: #64748b; margin-top: 20px;">خروج</button>
     </div>
 
@@ -87,43 +186,115 @@
 </div>
 
 <script type="module">
-    // استيراد الدوال من فايربيز الإصدار الحديث
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-analytics.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, query, where, orderBy, limit, addDoc, updateDoc, increment, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+    import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 
-    // إعدادات فايربيز الخاصة بك
+    import {
+        getFirestore,
+        doc,
+        setDoc,
+        getDoc,
+        onSnapshot,
+        collection,
+        query,
+        where,
+        orderBy,
+        limit,
+        addDoc,
+        updateDoc,
+        increment,
+        serverTimestamp,
+        getDocs
+    } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+
     const firebaseConfig = {
         apiKey: "AIzaSyBhIrY6VIp4VmxhFzyfpYGHK2MfNiuaflw",
         authDomain: "medobet-e65fe.firebaseapp.com",
         projectId: "medobet-e65fe",
         storageBucket: "medobet-e65fe.firebasestorage.app",
         messagingSenderId: "257706037859",
-        appId: "1:257706037859:web:acd2d7eff8109fad15de56",
-        measurementId: "G-9GMH9TW1ZQ"
+        appId: "1:257706037859:web:acd2d7eff8109fad15de56"
     };
 
-    // تهيئة التطبيق
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // تعريف المتغيرات لتخزين بيانات المستخدم الحالي
     let currentUserId = null;
     let currentUserCustomId = null;
+    let unsubscribeLogs = null;
 
-    // ------------------------------------
-    // الدوال الخاصة بالمستخدمين (تسجيل ودخول)
-    // ------------------------------------
+    const loadingEl = document.getElementById('loading');
+    const authSection = document.getElementById('authSection');
+    const userSection = document.getElementById('userSection');
+    const adminSection = document.getElementById('adminSection');
+    const statusMsg = document.getElementById('statusMsg');
+    const errorLog = document.getElementById('errorLog');
+
+    function showAuth() {
+        loadingEl.classList.add('hidden');
+        authSection.classList.remove('hidden');
+        userSection.classList.add('hidden');
+        adminSection.classList.add('hidden');
+    }
+
+    function showUser() {
+        loadingEl.classList.add('hidden');
+        authSection.classList.add('hidden');
+        userSection.classList.remove('hidden');
+        adminSection.classList.add('hidden');
+    }
+
+    function showAdmin() {
+        loadingEl.classList.add('hidden');
+        authSection.classList.add('hidden');
+        userSection.classList.add('hidden');
+        adminSection.classList.remove('hidden');
+    }
+
+    function stopOldLogs() {
+        if (typeof unsubscribeLogs === 'function') {
+            unsubscribeLogs();
+            unsubscribeLogs = null;
+        }
+    }
+
+    async function ensureUserDoc(user) {
+        const userRef = doc(db, "users", user.uid);
+        const snap = await getDoc(userRef);
+
+        if (!snap.exists()) {
+            const randomId = Math.floor(10000000 + Math.random() * 90000000).toString();
+            const isAdmin = (user.email === "1@gmail.com");
+
+            await setDoc(userRef, {
+                email: user.email || "",
+                balance: 0,
+                customId: randomId,
+                isAdmin: isAdmin
+            });
+        }
+    }
+
     window.register = async function() {
         const email = document.getElementById('email').value.trim();
         const pass = document.getElementById('password').value;
-        const errorLog = document.getElementById('errorLog');
-        
-        if(pass.length < 6) {
+
+        if (!email) {
+            errorLog.innerText = "أدخل البريد الإلكتروني";
+            errorLog.style.color = "#f87171";
+            return;
+        }
+
+        if (pass.length < 6) {
             errorLog.innerText = "كلمة المرور يجب أن تكون 6 أحرف على الأقل";
+            errorLog.style.color = "#f87171";
             return;
         }
 
@@ -133,25 +304,32 @@
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
             const randomId = Math.floor(10000000 + Math.random() * 90000000).toString();
-            
+
             await setDoc(doc(db, "users", userCredential.user.uid), {
                 email: email,
                 balance: 0,
                 customId: randomId,
                 isAdmin: (email === "1@gmail.com")
             });
-            errorLog.innerText = "";
+
+            errorLog.innerText = "تم إنشاء الحساب بنجاح";
+            errorLog.style.color = "#4ade80";
         } catch (err) {
-            errorLog.innerText = "خطأ: " + err.message;
+            errorLog.innerText = "خطأ: " + (err?.message || "حدث خطأ غير معروف");
             errorLog.style.color = "#f87171";
         }
-    }
+    };
 
     window.login = async function() {
         const email = document.getElementById('email').value.trim();
         const pass = document.getElementById('password').value;
-        const errorLog = document.getElementById('errorLog');
-        
+
+        if (!email || !pass) {
+            errorLog.innerText = "أدخل البريد الإلكتروني وكلمة المرور";
+            errorLog.style.color = "#f87171";
+            return;
+        }
+
         errorLog.innerText = "جاري الدخول...";
         errorLog.style.color = "#38bdf8";
 
@@ -162,105 +340,129 @@
             errorLog.innerText = "البيانات غير صحيحة";
             errorLog.style.color = "#f87171";
         }
-    }
+    };
 
     window.logout = function() {
-        signOut(auth).then(() => { location.reload(); });
-    }
+        signOut(auth).then(() => {
+            stopOldLogs();
+            location.reload();
+        }).catch(() => {
+            location.reload();
+        });
+    };
 
-    // ------------------------------------
-    // مراقبة حالة الاتصال والتوجيه للشاشات
-    // ------------------------------------
-    onAuthStateChanged(auth, (user) => {
-        document.getElementById('loading').classList.add('hidden');
-        
-        if (user) {
-            currentUserId = user.uid;
-            document.getElementById('authSection').classList.add('hidden');
-            
-            // جلب البيانات بشكل مستمر
-            onSnapshot(doc(db, "users", user.uid), (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    currentUserCustomId = data.customId;
-                    
-                    if (data.isAdmin) {
-                        document.getElementById('adminSection').classList.remove('hidden');
-                        document.getElementById('userSection').classList.add('hidden');
-                    } else {
-                        document.getElementById('userSection').classList.remove('hidden');
-                        document.getElementById('adminSection').classList.add('hidden');
-                        
-                        document.getElementById('u_balance').innerText = data.balance.toLocaleString();
-                        document.getElementById('u_id').innerText = data.customId;
-                        
-                        loadLogs(data.customId);
-                    }
-                    document.getElementById('statusMsg').innerText = "🟢 متصل: " + data.email;
+    onAuthStateChanged(auth, async (user) => {
+        try {
+            stopOldLogs();
+
+            if (user) {
+                currentUserId = user.uid;
+                await ensureUserDoc(user);
+
+                const userRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(userRef);
+
+                if (!docSnap.exists()) {
+                    showAuth();
+                    statusMsg.innerText = "🔴 تعذر تحميل بيانات الحساب";
+                    return;
                 }
-            });
-        } else {
-            document.getElementById('authSection').classList.remove('hidden');
-            document.getElementById('userSection').classList.add('hidden');
-            document.getElementById('adminSection').classList.add('hidden');
-            document.getElementById('statusMsg').innerText = "🔴 غير متصل";
+
+                const data = docSnap.data();
+                currentUserCustomId = data.customId || null;
+
+                if (data.isAdmin) {
+                    showAdmin();
+                } else {
+                    showUser();
+                    document.getElementById('u_balance').innerText = Number(data.balance || 0).toLocaleString();
+                    document.getElementById('u_id').innerText = data.customId || "--------";
+                    loadLogs(data.customId);
+                }
+
+                statusMsg.innerText = "🟢 متصل: " + (data.email || user.email || "");
+            } else {
+                currentUserId = null;
+                currentUserCustomId = null;
+                showAuth();
+                statusMsg.innerText = "🔴 غير متصل";
+            }
+        } catch (err) {
+            console.error(err);
+            showAuth();
+            statusMsg.innerText = "🔴 حدث خطأ أثناء تحميل البيانات";
         }
     });
 
-    // ------------------------------------
-    // جلب سجل التحويلات
-    // ------------------------------------
     function loadLogs(myId) {
-        const q = query(collection(db, "transactions"), 
-            where("involvedIds", "array-contains", myId), 
-            orderBy("timestamp", "desc"), 
+        if (!myId) return;
+
+        const q = query(
+            collection(db, "transactions"),
+            where("involvedIds", "array-contains", myId),
+            orderBy("timestamp", "desc"),
             limit(20)
         );
 
-        onSnapshot(q, (snap) => {
+        unsubscribeLogs = onSnapshot(q, (snap) => {
             let h = "";
-            snap.forEach(document => {
+
+            snap.forEach((document) => {
                 const d = document.data();
                 const isIn = (d.toId === myId);
                 const timeString = d.timestamp ? d.timestamp.toDate().toLocaleString('ar-EG') : 'الآن';
-                
+
                 h += `<tr>
                     <td class="${isIn ? 'in' : 'out'}">${isIn ? 'استلام' : 'إرسال'}</td>
-                    <td>${isIn ? d.fromId : d.toId}</td>
-                    <td>${d.amount}</td>
+                    <td>${isIn ? (d.fromId || '-') : (d.toId || '-')}</td>
+                    <td>${d.amount || 0}</td>
                     <td>${timeString}</td>
                 </tr>`;
             });
-            
-            if(h === "") h = "<tr><td colspan='4'>لا توجد عمليات</td></tr>";
+
+            if (h === "") {
+                h = "<tr><td colspan='4'>لا توجد عمليات</td></tr>";
+            }
+
             document.getElementById('historyBody').innerHTML = h;
+        }, (err) => {
+            console.error(err);
+            document.getElementById('historyBody').innerHTML = "<tr><td colspan='4'>تعذر تحميل السجل</td></tr>";
         });
     }
 
-    // ------------------------------------
-    // لعبة التفاحة
-    // ------------------------------------
     window.playAppleGame = async function() {
         const amt = parseInt(document.getElementById('betAmount').value);
         const msgBox = document.getElementById('gameMsg');
-        
-        if(!amt || amt <= 0) {
-            msgBox.innerText = "أدخل مبلغ صحيح"; msgBox.style.color = "#f87171"; return;
+
+        if (!amt || amt <= 0) {
+            msgBox.innerText = "أدخل مبلغ صحيح";
+            msgBox.style.color = "#f87171";
+            return;
         }
 
-        const userRef = doc(db, "users", currentUserId);
-        const docSnap = await getDoc(userRef);
-        
-        if (docSnap.exists()) {
-            const bal = docSnap.data().balance;
+        try {
+            const userRef = doc(db, "users", currentUserId);
+            const docSnap = await getDoc(userRef);
+
+            if (!docSnap.exists()) {
+                msgBox.innerText = "تعذر العثور على الحساب";
+                msgBox.style.color = "#f87171";
+                return;
+            }
+
+            const bal = Number(docSnap.data().balance || 0);
+
             if (bal < amt) {
-                msgBox.innerText = "رصيدك لا يكفي للرهان!"; msgBox.style.color = "#f87171"; return;
+                msgBox.innerText = "رصيدك لا يكفي للرهان!";
+                msgBox.style.color = "#f87171";
+                return;
             }
 
             let newBal = bal - amt;
-            const isWin = Math.random() <= 0.20; // نسبة الفوز 20%
-            
-            if(isWin) {
+            const isWin = Math.random() <= 0.20;
+
+            if (isWin) {
                 newBal += (amt * 2);
                 msgBox.innerText = `🎉 مبروك! كسبت ${amt * 2} كوينز`;
                 msgBox.style.color = "#4ade80";
@@ -268,57 +470,81 @@
                 msgBox.innerText = "😢 خسرت الرهان. جرب تاني!";
                 msgBox.style.color = "#f87171";
             }
-            
-            await updateDoc(userRef, { balance: newBal });
-        }
-    }
 
-    // ------------------------------------
-    // وظائف الأدمن
-    // ------------------------------------
+            await updateDoc(userRef, { balance: newBal });
+        } catch (err) {
+            console.error(err);
+            msgBox.innerText = "حدث خطأ أثناء اللعب";
+            msgBox.style.color = "#f87171";
+        }
+    };
+
     window.generateMillion = async function() {
-        await updateDoc(doc(db, "users", currentUserId), {
-            balance: increment(1000000)
-        });
-        document.getElementById('adminMsg').innerText = "تمت إضافة مليون كوينز بنجاح!";
-        document.getElementById('adminMsg').style.color = "#4ade80";
-    }
+        const msg = document.getElementById('adminMsg');
+
+        try {
+            await updateDoc(doc(db, "users", currentUserId), {
+                balance: increment(1000000)
+            });
+
+            msg.innerText = "تمت إضافة مليون كوينز بنجاح!";
+            msg.style.color = "#4ade80";
+        } catch (err) {
+            console.error(err);
+            msg.innerText = "فشل تنفيذ العملية";
+            msg.style.color = "#f87171";
+        }
+    };
 
     window.adminSend = async function() {
-        const tid = document.getElementById('targetId').value;
+        const tid = document.getElementById('targetId').value.trim();
         const amt = parseInt(document.getElementById('sendAmount').value);
         const msgBox = document.getElementById('adminMsg');
-        
-        if(!tid || !amt || amt <= 0) {
-            msgBox.innerText = "أدخل البيانات بشكل صحيح"; msgBox.style.color = "#f87171"; return;
+
+        if (!tid || !amt || amt <= 0) {
+            msgBox.innerText = "أدخل البيانات بشكل صحيح";
+            msgBox.style.color = "#f87171";
+            return;
         }
 
-        const q = query(collection(db, "users"), where("customId", "==", tid));
-        const querySnapshot = await getDocs(q);
+        try {
+            const q = query(collection(db, "users"), where("customId", "==", tid));
+            const querySnapshot = await getDocs(q);
 
-        if (querySnapshot.empty) {
-            msgBox.innerText = "لا يوجد لاعب بهذا الـ ID"; msgBox.style.color = "#f87171"; return;
+            if (querySnapshot.empty) {
+                msgBox.innerText = "لا يوجد لاعب بهذا الـ ID";
+                msgBox.style.color = "#f87171";
+                return;
+            }
+
+            const targetUserDoc = querySnapshot.docs[0];
+
+            await updateDoc(doc(db, "users", targetUserDoc.id), {
+                balance: increment(amt)
+            });
+
+            await addDoc(collection(db, "transactions"), {
+                fromId: "ADMIN",
+                toId: tid,
+                amount: amt,
+                involvedIds: [tid, "ADMIN"],
+                timestamp: serverTimestamp()
+            });
+
+            msgBox.innerText = `تم إرسال ${amt} كوينز بنجاح`;
+            msgBox.style.color = "#4ade80";
+        } catch (err) {
+            console.error(err);
+            msgBox.innerText = "فشل إرسال الكوينز";
+            msgBox.style.color = "#f87171";
         }
+    };
 
-        const targetUserDoc = querySnapshot.docs[0];
-        
-        // تحديث رصيد اللاعب
-        await updateDoc(doc(db, "users", targetUserDoc.id), {
-            balance: increment(amt)
-        });
-
-        // إضافة سجل المعاملة
-        await addDoc(collection(db, "transactions"), {
-            fromId: "ADMIN",
-            toId: tid,
-            amount: amt,
-            involvedIds: [tid, "ADMIN"],
-            timestamp: serverTimestamp()
-        });
-
-        msgBox.innerText = `تم إرسال ${amt} كوينز بنجاح`;
-        msgBox.style.color = "#4ade80";
-    }
+    setTimeout(() => {
+        if (!auth.currentUser) {
+            showAuth();
+        }
+    }, 6000);
 </script>
 </body>
 </html>
